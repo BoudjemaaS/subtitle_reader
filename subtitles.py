@@ -47,11 +47,11 @@ def afficher_texte(texte,s_time):
 
 
 def read(delay,curseur):
+    curseur = time_to_sec(curseur)
+    curseur -= delay
+    pause = 0.2
     threading.Thread(target=timer, daemon=True).start()
-    
-
-    
-
+    t0= time_to_sec(time.strftime("%H:%M:%S", time.localtime())) 
 
     with open(file, 'r', encoding='1252') as f:
         
@@ -59,15 +59,15 @@ def read(delay,curseur):
         cursed = False
 
         while ligne:
-           
+            
             if not cursed :
-                while "-->" not in ligne or time_to_sec(curseur) > time_to_sec(ligne[:8]):
-                    
+                while "-->" not in ligne or curseur > time_to_sec(ligne[:8]):
                     ligne = next(f, None)
-                    cursed = True
-                
-            time.sleep(delay)
-            t0= time_to_sec(time.strftime("%H:%M:%S", time.localtime()))
+                cursed = True
+
+            #print(ligne)     
+            #time.sleep(delay)
+            
             
         
             next_ligne = next(f, None)
@@ -76,23 +76,26 @@ def read(delay,curseur):
                 t1=time_to_sec(ligne[:8]) + t0
                 t2=time_to_sec(ligne[17:25]) + t0
                 s_time=(t2 - t1)*1000
+                
                 if next_ligne != "":
                     s_time = s_time//2
                 
                 
 
-            if (not ligne.strip().isdigit()) and "-->" not in ligne:
+            if (not ligne.strip().isdigit()) and "-->" not in ligne and len(ligne)> 1:
                 
-               
-                while time_to_sec(time.strftime("%H:%M:%S", time.localtime())) + time_to_sec(curseur)< t1:
-                    time.sleep(0.001)
+                
+                while time_to_sec(time.strftime("%H:%M:%S", time.localtime())) + curseur< t1:
+                    True
                   
-                print(ligne)
+                #print(ligne)
+                time.sleep(pause)
                 afficher_texte(ligne,s_time)
+                #delay-=1.5
                 
 
             ligne = next_ligne
            
 
-read(0,"00:01:12")
+read(0,"00:14:00")
 
