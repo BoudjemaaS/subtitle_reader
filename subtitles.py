@@ -6,11 +6,17 @@ file='menace_fantome.srt'
 
 
 def timer():
-    timer =0
+    timer = 0
     while True:
         print(timer)
         timer+=1
         time.sleep(1)
+
+def time_to_sec(t):
+    h=int(t[:2])
+    m=int(t[3:5])
+    s=int(t[6:8])
+    return h * 3600 + m * 60 + s
 
 def afficher_texte(texte,s_time):
 
@@ -37,29 +43,35 @@ def afficher_texte(texte,s_time):
     win.after(s_time, win.destroy) 
     win.mainloop()
 
-def time_to_sec(t):
-    h=int(t[:2])
-    m=int(t[3:5])
-    s=int(t[6:8])
-    return h * 3600 + m * 60 + s
 
 
-def read(delay):
+
+def read(delay,curseur):
     threading.Thread(target=timer, daemon=True).start()
     
-    
-    time.sleep(delay)
-    t0= time_to_sec(time.strftime("%H:%M:%S", time.localtime())) 
-    prev = None
 
+    time.sleep(delay)
+
+    t0= time_to_sec(time.strftime("%H:%M:%S", time.localtime())) + time_to_sec(curseur)
+    prev = None
+    cursed = False
 
 
     with open(file, 'r', encoding='1252') as f:
-
+        
         ligne = next(f, None)
+    
         while ligne:
+           
+            if not cursed :
+                while curseur not in ligne:
+                    print(ligne)
+                    ligne = next(f, None)
+                    cursed = True
+
+            print(ligne)
             next_ligne = next(f, None)
-            
+        
             if "-->" in ligne:
                 t1=time_to_sec(ligne[:8]) + t0
                 t2=time_to_sec(ligne[17:25]) + t0
@@ -81,6 +93,5 @@ def read(delay):
             ligne = next_ligne
            
 
-read(6)
-
+read(0,"00:00:19")
 
