@@ -44,11 +44,11 @@ def time_to_sec(t):
     return h * 3600 + m * 60 + s
 
 
-def read():
+def read(delay):
     threading.Thread(target=timer, daemon=True).start()
     
     
-
+    time.sleep(delay)
     t0= time_to_sec(time.strftime("%H:%M:%S", time.localtime())) 
     prev = None
 
@@ -73,7 +73,7 @@ def read():
                 #if prev == "fleche":
                     #time.sleep(t1 - time_to_sec(time.strftime("%H:%M:%S", time.localtime())))
                 while time_to_sec(time.strftime("%H:%M:%S", time.localtime())) < t1:
-                    time.sleep(0.1)
+                    time.sleep(0.001)
                     
                 afficher_texte(ligne,s_time)
                 prev = "texte"
@@ -81,6 +81,6 @@ def read():
             ligne = next_ligne
            
 
-read()
+read(6)
 
 
