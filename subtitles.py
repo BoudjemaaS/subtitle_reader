@@ -50,26 +50,26 @@ def read(delay,curseur):
     threading.Thread(target=timer, daemon=True).start()
     
 
-    time.sleep(delay)
-
-    t0= time_to_sec(time.strftime("%H:%M:%S", time.localtime())) + time_to_sec(curseur)
-    prev = None
-    cursed = False
+    
 
 
     with open(file, 'r', encoding='1252') as f:
         
         ligne = next(f, None)
-    
+        cursed = False
+
         while ligne:
            
             if not cursed :
-                while curseur not in ligne:
-                    print(ligne)
+                while "-->" not in ligne or time_to_sec(curseur) > time_to_sec(ligne[:8]):
+                    
                     ligne = next(f, None)
                     cursed = True
-
-            print(ligne)
+                
+            time.sleep(delay)
+            t0= time_to_sec(time.strftime("%H:%M:%S", time.localtime()))
+            
+        
             next_ligne = next(f, None)
         
             if "-->" in ligne:
@@ -78,20 +78,21 @@ def read(delay,curseur):
                 s_time=(t2 - t1)*1000
                 if next_ligne != "":
                     s_time = s_time//2
-
-                prev = "fleche"
+                
+                
 
             if (not ligne.strip().isdigit()) and "-->" not in ligne:
-                #if prev == "fleche":
-                    #time.sleep(t1 - time_to_sec(time.strftime("%H:%M:%S", time.localtime())))
-                while time_to_sec(time.strftime("%H:%M:%S", time.localtime())) < t1:
+                
+               
+                while time_to_sec(time.strftime("%H:%M:%S", time.localtime())) + time_to_sec(curseur)< t1:
                     time.sleep(0.001)
-                    
+                  
+                print(ligne)
                 afficher_texte(ligne,s_time)
-                prev = "texte"
+                
 
             ligne = next_ligne
            
 
-read(0,"00:00:19")
+read(0,"00:01:12")
 
